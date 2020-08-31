@@ -1,54 +1,64 @@
+/* eslint-disable spaced-comment */
+/* eslint-disable indent */
 module.exports = [
   {
     key: 'pages',
-    name: 'Pages',
+    name: '',
     icon: 'ios-paper-outline',
     child: [
-      {
-        key: 'other_page',
-        name: 'Welcome Page',
-        title: true,
-      },
-      {
-        key: 'blank',
-        name: 'Blank Page',
-        link: '/app',
-        icon: 'ios-document-outline',
-      },
-      {
-        key: 'main_page',
-        name: 'Sample Page',
-        title: true,
-      },
-      {
-        key: 'dashboard',
-        name: 'Dashboard',
-        link: '/app/dashboard',
-        icon: 'ios-home-outline',
-      },
+     // {
+      //  key: 'other_page',
+        // eslint-disable-next-line spaced-comment
+        //name: 'Welcome Page',
+        //title: true,
+     // },
+ //     {
+  //      key: 'dashboard',
+    //    name: 'Dashboard',
+      //  link: '/app/dashboard',
+       // icon: 'ios-home-outline',
+     // },
+     // {
+      //  key: 'blank',
+    //    name: 'Blank Page',
+      //  link: '/app',
+   //     icon: 'ios-document-outline',
+    //  },
+    {
+      key: 'profile',
+      name: 'Profile',
+      link: '/app/profile',
+      icon: 'ios-home-outline',
+    },
       {
         key: 'form',
-        name: 'Form',
+        name: 'Complaint',
         link: '/app/form',
         icon: 'ios-list-box-outline',
       },
       {
         key: 'table',
-        name: 'Table',
+        name: 'Ticket',
         link: '/app/table',
         icon: 'ios-grid-outline',
       },
       {
-        key: 'maintenance',
-        name: 'Maintenance',
-        link: '/maintenance',
-        icon: 'ios-build-outline'
+        key: 'finedocumentation',
+        name: 'View Fine',
+        link: '/app/finedocumentation',
+        icon: 'ios-grid-outline',
       },
       {
-        key: 'coming_soon',
-        name: 'Coming Soon',
-        link: '/coming-soon',
-        icon: 'ios-bonfire-outline'
+        key: 'complaint',
+        name: 'Feedback',
+        link: '/app/complaint',
+        icon: 'ios-grid-outline',
+      },
+      {
+        key: 'paymenthistory',
+        name: 'Payment History',
+        link: '/app/paymenthistory',
+        icon: 'ios-grid-outline',
       },
     ]
   },
@@ -69,10 +79,10 @@ module.exports = [
         icon: 'ios-person-outline'
       },
       {
-        key: 'register',
-        name: 'Register',
-        link: '/register',
-        icon: 'ios-key-outline'
+        key: 'changepassword',
+        name: 'Change Password',
+        link: '/changepassword',
+        icon: 'ios-undo-outline'
       },
       {
         key: 'reset',
@@ -80,60 +90,14 @@ module.exports = [
         link: '/reset-password',
         icon: 'ios-undo-outline'
       },
-    ]
-  },
-  {
-    key: 'errors',
-    name: 'Errors',
-    icon: 'ios-paw-outline',
-    child: [
       {
-        key: 'errors_page',
-        name: 'Errors Pages',
-        title: true,
-      },
-      {
-        key: 'not_found_page',
-        name: 'Not Found Page',
-        link: '/app/pages/not-found',
-        icon: 'ios-warning-outline'
-      },
-      {
-        key: 'error_page',
-        name: 'Error Page',
-        link: '/app/pages/error',
-        icon: 'ios-warning-outline'
-      },
-    ]
-  },
-  {
-    key: 'menu_levels',
-    name: 'Menu Levels',
-    multilevel: true,
-    icon: 'ios-menu-outline',
-    child: [
-      {
-        key: 'level_1',
-        name: 'Level 1',
-        link: '/#'
-      },
-      {
-        key: 'level_2',
-        keyParent: 'menu_levels',
-        name: 'Level 2',
-        child: [
-          {
-            key: 'sub_menu_1',
-            name: 'Sub Menu 1',
-            link: '/#'
-          },
-          {
-            key: 'sub_menu_2',
-            name: 'Sub Menu 2',
-            link: '/#'
-          },
-        ]
+        key: 'logout',
+        name: 'Logout',
+        link: '/logout',
+        icon: 'ios-undo-outline'
       },
     ]
   }
+
+
 ];
