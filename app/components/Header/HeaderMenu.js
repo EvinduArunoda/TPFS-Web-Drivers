@@ -107,7 +107,6 @@ class HeaderMenu extends React.Component {
       type,
       dataMenu,
       history,
-      openGuide,
       mode,
       toggleDrawerOpen,
       openMobileNav,
@@ -160,11 +159,6 @@ class HeaderMenu extends React.Component {
                 <Tooltip title="Turn Dark/Light" placement="bottom">
                   <IconButton className={classes.button} onClick={() => this.turnMode(mode)}>
                     <Ionicon icon="ios-bulb-outline" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Show Guide" placement="bottom">
-                  <IconButton className={classes.button} onClick={openGuide}>
-                    <Ionicon icon="ios-help-circle-outline" />
                   </IconButton>
                 </Tooltip>
               </div>

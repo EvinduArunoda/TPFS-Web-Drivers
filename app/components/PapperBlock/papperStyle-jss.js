@@ -4,7 +4,7 @@ const styles = theme => ({
     paddingTop: theme.spacing(3),
     paddingBottom: theme.spacing(3),
     marginBottom: theme.spacing(3),
-    boxShadow: theme.shade.light,
+    boxShadow: theme.palette.primary.light,
     color: theme.palette.text.primary,
     '&$noMargin': {
       margin: 0
@@ -43,7 +43,7 @@ const styles = theme => ({
   content: {
     marginTop: theme.spacing(2),
     padding: theme.spacing(1),
-    borderRadius: theme.rounded.medium,
+    borderRadius: theme.palette.medium,
     backgroundColor: theme.palette.background.default,
     [theme.breakpoints.up('lg')]: {
       padding: theme.spacing(2)
@@ -72,7 +72,7 @@ const styles = theme => ({
     overflowX: 'auto',
   },
   iconTitle: {
-    borderRadius: theme.rounded.small,
+    borderRadius: theme.palette.rounded,
     border: theme.palette.type === 'dark' ? 'none' : `1px solid ${lighten(theme.palette.primary.dark, 0.9)}`,
     boxShadow: `0 2px 15px -5px ${theme.palette.primary.main}`,
     background: theme.palette.type === 'dark' ? theme.palette.primary.main : lighten(theme.palette.primary.light, 0.5),

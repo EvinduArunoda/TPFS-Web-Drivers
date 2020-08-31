@@ -1,3 +1,9 @@
+/* eslint-disable react/no-unused-state */
+/* eslint-disable no-shadow */
+/* eslint-disable react/sort-comp */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -24,12 +30,46 @@ import messageStyles from 'dan-styles/Messages.scss';
 import avatarApi from 'dan-api/images/avatars';
 import link from 'dan-api/ui/link';
 import styles from './header-jss';
-
+import fire from '../../Firebase/firebase';
 class UserMenu extends React.Component {
   state = {
     anchorEl: null,
-    openMenu: null
+    openMenu: null,
+    num: ''
   };
+
+
+  componentDidMount() {
+    fire.auth().onAuthStateChanged(authUser => {
+      if (!authUser) {
+        window.location.href = '/login';
+      } else {
+        const user = authUser.uid;
+        fire.firestore().collection('Drivers').doc(user).get()
+          .then(doc => {
+            const l_n = doc.data().LicenseNumber;
+            const { name } = doc.data();
+            this.setState({ name });
+            fire.storage().ref('Drivers').child(l_n + '.jpg').getDownloadURL()
+              .then(url => {
+                this.setState({ url });
+              });
+          });
+      }
+    });
+  }
+
+  handleClose = () => {
+    this.setState({ anchorEl: null, openMenu: null });
+  };
+
+  handleclose = () => {
+    this.setState({ anchorEl: null, openMenu: null, num: '' });
+  }
+
+  logout() {
+    fire.auth().signOut();
+  }
 
   handleMenu = menu => (event) => {
     const { openMenu } = this.state;
@@ -37,10 +77,6 @@ class UserMenu extends React.Component {
       openMenu: openMenu === menu ? null : menu,
       anchorEl: event.currentTarget
     });
-  };
-
-  handleClose = () => {
-    this.setState({ anchorEl: null, openMenu: null });
   };
 
   render() {
@@ -53,89 +89,14 @@ class UserMenu extends React.Component {
           onClick={this.handleMenu('notification')}
           color="inherit"
           className={classNames(classes.notifIcon, dark ? classes.dark : classes.light)}
-        >
-          <Badge className={classes.badge} badgeContent={4} color="secondary">
-            <Ionicon icon="ios-notifications-outline" />
-          </Badge>
-        </IconButton>
-        <Menu
-          id="menu-notification"
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          className={classes.notifMenu}
-          PaperProps={{
-            style: {
-              width: 350,
-            },
-          }}
-          open={openMenu === 'notification'}
-          onClose={this.handleClose}
-        >
-          <MenuItem onClick={this.handleClose}>
-            <div className={messageStyles.messageInfo}>
-              <ListItemAvatar>
-                <Avatar alt="User Name" src={avatarApi[0]} />
-              </ListItemAvatar>
-              <ListItemText primary={dummy.text.subtitle} secondary={dummy.text.date} />
-            </div>
-          </MenuItem>
-          <Divider variant="inset" />
-          <MenuItem onClick={this.handleClose}>
-            <div className={messageStyles.messageInfo}>
-              <ListItemAvatar>
-                <Avatar className={messageStyles.icon}>
-                  <Info />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={dummy.text.sentences} className={classes.textNotif} secondary={dummy.text.date} />
-            </div>
-          </MenuItem>
-          <Divider variant="inset" />
-          <MenuItem onClick={this.handleClose}>
-            <div className={messageStyles.messageSuccess}>
-              <ListItemAvatar>
-                <Avatar className={messageStyles.icon}>
-                  <Check />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={dummy.text.subtitle} className={classes.textNotif} secondary={dummy.text.date} />
-            </div>
-          </MenuItem>
-          <Divider variant="inset" />
-          <MenuItem onClick={this.handleClose}>
-            <div className={messageStyles.messageWarning}>
-              <ListItemAvatar>
-                <Avatar className={messageStyles.icon}>
-                  <Warning />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={dummy.text.subtitle} className={classes.textNotif} secondary={dummy.text.date} />
-            </div>
-          </MenuItem>
-          <Divider variant="inset" />
-          <MenuItem onClick={this.handleClose}>
-            <div className={messageStyles.messageError}>
-              <ListItemAvatar>
-                <Avatar className={messageStyles.icon}>
-                  <Error />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary="Suspendisse pharetra pulvinar sollicitudin. Aenean ut orci eu odio cursus lobortis eget tempus velit. " className={classes.textNotif} secondary="Jan 9, 2016" />
-            </div>
-          </MenuItem>
-        </Menu>
+        />
         <Button onClick={this.handleMenu('user-setting')}>
-          <Avatar
-            alt={dummy.user.name}
-            src={dummy.user.avatar}
-          />
+          <div>
+            <Avatar
+              alt={dummy.user.name}
+              src={this.state.url}
+            />
+          </div>
         </Button>
         <Menu
           id="menu-appbar"
@@ -151,16 +112,11 @@ class UserMenu extends React.Component {
           open={openMenu === 'user-setting'}
           onClose={this.handleClose}
         >
-          <MenuItem onClick={this.handleClose} component={Link} to={link.profile}>My Profile</MenuItem>
-          <MenuItem onClick={this.handleClose} component={Link} to={link.calendar}>My Calendar</MenuItem>
-          <MenuItem onClick={this.handleClose} component={Link} to={link.email}>
-            My Inbox
-            <ListItemIcon>
-              <Badge className={classNames(classes.badge, classes.badgeMenu)} badgeContent={2} color="secondary">&nbsp;</Badge>
-            </ListItemIcon>
-          </MenuItem>
+          <MenuItem onClick={this.handleClose} component={Link} to="/app/profile">My Profile</MenuItem>
+          <MenuItem onClick={this.handleClose} component={Link} to="/app/editprofile">Edit Profile</MenuItem>
+          <MenuItem onClick={this.handleClose} component={Link} to="/app/editphoto">Change Photo</MenuItem>
           <Divider />
-          <MenuItem onClick={this.handleClose} component={Link} to="/">
+          <MenuItem onClick={this.logout} type="submit">
             <ListItemIcon>
               <ExitToApp />
             </ListItemIcon>

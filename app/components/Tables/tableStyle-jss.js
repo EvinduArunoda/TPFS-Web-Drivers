@@ -151,7 +151,7 @@ const styles = theme => ({
   settings: {
     background: theme.palette.background.default,
     padding: 20,
-    borderRadius: theme.rounded.medium
+    borderRadius: theme.palette.rounded
   },
   up: {
     color: green[500],

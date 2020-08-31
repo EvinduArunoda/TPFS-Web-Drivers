@@ -1,3 +1,8 @@
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/sort-comp */
+/* eslint-disable camelcase */
+/* eslint-disable no-empty */
+/* eslint-disable class-methods-use-this */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -9,10 +14,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Avatar from '@material-ui/core/Avatar';
 import brand from 'dan-api/dummy/brand';
 import dummy from 'dan-api/dummy/dummyContents';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
 import logo from 'dan-images/logo.svg';
 import MainMenu from './MainMenu';
 import styles from './sidebar-jss';
-
+import fire from '../../Firebase/firebase';
 class SidebarContent extends React.Component {
   state = {
     transform: 0,
@@ -27,6 +34,26 @@ class SidebarContent extends React.Component {
   componentWillUnmount() {
     const mainContent = document.getElementById('sidebar');
     mainContent.removeEventListener('scroll', this.handleScroll);
+  }
+
+  componentDidMount() {
+    fire.auth().onAuthStateChanged(authUser => {
+      if (!authUser) {
+        window.location.href = '/login';
+      } else {
+        const user = authUser.uid;
+        fire.firestore().collection('Drivers').doc(user).get()
+          .then(doc => {
+            const l_n = doc.data().LicenseNumber;
+            const { name } = doc.data();
+            this.setState({ name });
+            fire.storage().ref('Drivers').child(l_n + '.jpg').getDownloadURL()
+              .then(url => {
+                this.setState({ url });
+              });
+          });
+      }
+    });
   }
 
   handleScroll = (event) => {
@@ -73,50 +100,12 @@ class SidebarContent extends React.Component {
             <img src={logo} alt={brand.name} />
             {brand.name}
           </NavLink>
-          {isLogin && (
-            <div
-              className={classNames(classes.profile, classes.user)}
-              style={{ opacity: 1 - (transform / 100), marginTop: transform * -0.3 }}
-            >
-              <Avatar
-                alt={dummy.user.name}
-                src={dummy.user.avatar}
-                className={classNames(classes.avatar, classes.bigAvatar)}
-              />
-              <div>
-                <h4>{dummy.user.name}</h4>
-                <Button size="small" onClick={openMenuStatus}>
-                  <i className={classNames(classes.dotStatus, setStatus(status))} />
-                  {status}
-                </Button>
-                <Menu
-                  id="status-menu"
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={closeMenuStatus}
-                  className={classes.statusMenu}
-                >
-                  <MenuItem onClick={() => changeStatus('online')}>
-                    <i className={classNames(classes.dotStatus, classes.online)} />
-                    Online
-                  </MenuItem>
-                  <MenuItem onClick={() => changeStatus('idle')}>
-                    <i className={classNames(classes.dotStatus, classes.idle)} />
-                    Idle
-                  </MenuItem>
-                  <MenuItem onClick={() => changeStatus('bussy')}>
-                    <i className={classNames(classes.dotStatus, classes.bussy)} />
-                    Bussy
-                  </MenuItem>
-                  <MenuItem onClick={() => changeStatus('offline')}>
-                    <i className={classNames(classes.dotStatus, classes.offline)} />
-                    Offline
-                  </MenuItem>
-                </Menu>
-              </div>
-            </div>
-          )}
+          <div
+            className={classNames(classes.profile, classes.user)}
+            style={{ opacity: 1 - (transform / 100), marginTop: transform * -0.3 }}
+          />
         </div>
+
         <div
           id="sidebar"
           className={

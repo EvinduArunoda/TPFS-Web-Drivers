@@ -84,8 +84,10 @@ class Header extends React.Component {
     const { changeMode } = this.props;
     if (mode === 'light') {
       changeMode('dark');
+      this.setState({ turnDarker: true });
     } else {
       changeMode('light');
+      this.setState({ turnDarker: false });
     }
   };
 
@@ -159,11 +161,6 @@ class Header extends React.Component {
                 <Tooltip title="Turn Dark/Light" placement="bottom">
                   <IconButton className={classes.button} onClick={() => this.turnMode(mode)}>
                     <Ionicon icon="ios-bulb-outline" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Show Guide" placement="bottom">
-                  <IconButton className={classes.button} onClick={openGuide}>
-                    <Ionicon icon="ios-help-circle-outline" />
                   </IconButton>
                 </Tooltip>
               </div>

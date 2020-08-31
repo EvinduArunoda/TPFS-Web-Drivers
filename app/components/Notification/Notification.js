@@ -9,7 +9,7 @@ const styles = theme => ({
   close: {
     width: theme.spacing(4),
     height: theme.spacing(4),
-    padding: 0,
+    paddingtop: 100,
   },
 });
 
