@@ -1,3 +1,13 @@
+/* eslint-disable react/no-access-state-in-setstate */
+/* eslint-disable no-empty */
+/* eslint-disable react/sort-comp */
+/* eslint-disable consistent-return */
+/* eslint-disable quotes */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-shadow */
+/* eslint-disable react/no-unused-state */
+/* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -6,22 +16,22 @@ import { Field, reduxForm } from 'redux-form/immutable';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import Grid from '@material-ui/core/Grid';
+// eslint-disable-next-line no-unused-vars
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControl from '@material-ui/core/FormControl';
+// eslint-disable-next-line no-unused-vars
 import FormLabel from '@material-ui/core/FormLabel';
+// eslint-disable-next-line no-unused-vars
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
-import {
-  CheckboxRedux,
-  SelectRedux,
-  TextFieldRedux,
-  SwitchRedux
-} from 'dan-components/Forms/ReduxFormMUI';
+import { Input } from '@material-ui/core';
+import { Route } from 'react-router-dom';
 import { initAction, clearAction } from '../../../actions/ReduxFormActions';
+import fire from '../../../Firebase/firebase';
 
 const renderRadioGroup = ({ input, ...rest }) => (
   <RadioGroup
@@ -67,16 +77,80 @@ const styles = theme => ({
 const initData = {
   text: 'Sample Text',
   email: 'sample@mail.com',
-  radio: 'option1',
-  selection: 'option1',
-  onof: true,
-  checkbox: true,
   textarea: 'This is default text'
 };
 
 class ReduxFormDemo extends Component {
+  constructor() {
+    super();
+    this.ref = fire.firestore().collection('Complaint');
+    this.state = {
+      title: '',
+      description: '',
+      date: '',
+      user: '',
+      submitDisabled: true,
+      DescriptionValid: false,
+      TitleValid: false
+    };
+  }
+
+  handleDescriptionChange = ({ target }) => {
+    const DescriptionValid = target.value.length > 5; // basic text validation
+    const submitValid = this.state.TitleValid && DescriptionValid;
+    this.setState({
+      description: target.value,
+      DescriptionValid,
+      submitDisabled: !submitValid
+    });
+  };
+
+  handleTitleChange = ({ target }) => {
+    const TitleValid = target.value.length > 7; // basic text validation
+    const submitValid = this.state.DescriptionValid && TitleValid;
+    this.setState({
+      title: target.value,
+      TitleValid,
+      submitDisabled: !submitValid
+    });
+  };
+
+  onSubmit = (e) => {
+    e.preventDefault();
+    const {
+      title, description
+    } = this.state;
+
+    fire.auth().onAuthStateChanged(authUser => {
+      if (authUser) {
+        const user = fire.firestore().doc('Drivers/' + authUser.uid);
+        const timestamp = new Date();
+        const status = 0;
+        this.ref.add({
+          title, description, user, status, timestamp
+        }).then((docRef) => {
+          this.setState({
+            title: '',
+            description: '',
+            timestamp: '',
+            user: '',
+            status: ''
+          });
+          window.alert("Your Complaint has been Submitted successfully. We will get back to you soon");
+        })
+          .catch((error) => {
+            window.alert("Error adding document: ", error);
+          });
+      }
+    });
+  }
+
+
   render() {
     const trueBool = true;
+    const {
+      policeman, policestation, email, nic, complaint, date
+    } = this.state;
     const {
       classes,
       handleSubmit,
@@ -92,85 +166,44 @@ class ReduxFormDemo extends Component {
           <Grid item xs={12} md={6}>
             <Paper className={classes.root}>
               <Typography variant="h5" component="h3">
-                Simple Form Example
-              </Typography>
-              <Typography component="p">
-                The delay between when you click (Submit) and when the alert dialog pops up is intentional, to simulate server latency.
+                Complaint Form
               </Typography>
               <div className={classes.buttonInit}>
-                <Button onClick={() => init(initData)} color="secondary" type="button">
-                  Load Sample Data
+                <Button color="secondary" type="button">
+                  Complaint Details
                 </Button>
-                <Button onClick={() => clear()} type="button">
-                  Clear Data
+                <Button onClick={this.onReset} type="submit">
+                  Reset
                 </Button>
               </div>
-              <form onSubmit={handleSubmit}>
+              <form data-testid="form" onSubmit={this.onSubmit}>
                 <div>
-                  <Field
-                    name="text"
-                    component={TextFieldRedux}
-                    placeholder="Text Field"
-                    label="Text Field"
-                    validate={required}
+                  <Input
+                    name="title"
+                    id="title"
+                    placeholder="Voilation Type"
+                    label="title"
                     required
-                    ref={this.saveRef}
+                    value={this.state.title}
+                    onChange={this.handleTitleChange}
                     className={classes.field}
                   />
                 </div>
-                <div>
-                  <Field
-                    name="email"
-                    component={TextFieldRedux}
-                    placeholder="Email Field"
-                    label="Email"
-                    required
-                    validate={[required, email]}
-                    className={classes.field}
-                  />
-                </div>
-                <div className={classes.fieldBasic}>
-                  <FormLabel component="label">Choose One Option</FormLabel>
-                  <Field name="radio" className={classes.inlineWrap} component={renderRadioGroup}>
-                    <FormControlLabel value="option1" control={<Radio />} label="Option 1" />
-                    <FormControlLabel value="option2" control={<Radio />} label="Option 2" />
-                  </Field>
-                </div>
-                <div>
-                  <FormControl className={classes.field}>
-                    <InputLabel htmlFor="selection">Selection</InputLabel>
-                    <Field
-                      name="selection"
-                      component={SelectRedux}
-                      placeholder="Selection"
-                      autoWidth={trueBool}
-                    >
-                      <MenuItem value="option1">Option One</MenuItem>
-                      <MenuItem value="option2">Option Two</MenuItem>
-                      <MenuItem value="option3">Option Three</MenuItem>
-                    </Field>
-                  </FormControl>
-                </div>
-                <div className={classes.fieldBasic}>
-                  <FormLabel component="label">Toggle Input</FormLabel>
-                  <div className={classes.inlineWrap}>
-                    <FormControlLabel control={<Field name="onof" component={SwitchRedux} />} label="On/OF Switch" />
-                    <FormControlLabel control={<Field name="checkbox" component={CheckboxRedux} />} label="Checkbox" />
-                  </div>
-                </div>
+
                 <div className={classes.field}>
-                  <Field
-                    name="textarea"
+                  <textarea
+                    name="description"
+                    id="description"
                     className={classes.field}
-                    component={TextFieldRedux}
-                    placeholder="Textarea"
-                    label="Textarea"
-                    multiline={trueBool}
+                    placeholder="Complaint"
+                    label="Complaint Details"
+                    value={this.state.description}
+                    onChange={this.handleDescriptionChange}
                     rows={4}
                   />
                 </div>
                 <div>
-                  <Button variant="contained" color="secondary" type="submit" disabled={submitting}>
+                  <Button data-testid="complaint" variant="contained" color="secondary" type="submit" disabled={this.state.submitDisabled}>
                     Submit
                   </Button>
                   <Button
@@ -194,33 +227,5 @@ renderRadioGroup.propTypes = {
   input: PropTypes.object.isRequired,
 };
 
-ReduxFormDemo.propTypes = {
-  classes: PropTypes.object.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  reset: PropTypes.func.isRequired,
-  pristine: PropTypes.bool.isRequired,
-  submitting: PropTypes.bool.isRequired,
-  init: PropTypes.func.isRequired,
-  clear: PropTypes.func.isRequired,
-};
 
-const mapDispatchToProps = dispatch => ({
-  init: bindActionCreators(initAction, dispatch),
-  clear: () => dispatch(clearAction),
-});
-
-const ReduxFormMapped = reduxForm({
-  form: 'immutableExample',
-  enableReinitialize: true,
-})(ReduxFormDemo);
-
-const reducer = 'initval';
-const FormInit = connect(
-  state => ({
-    force: state,
-    initialValues: state.getIn([reducer, 'formValues'])
-  }),
-  mapDispatchToProps,
-)(ReduxFormMapped);
-
-export default withStyles(styles)(FormInit);
+export default withStyles(styles)(ReduxFormDemo);

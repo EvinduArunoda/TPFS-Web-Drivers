@@ -8,6 +8,9 @@ import {
   ComingSoon,
   Maintenance,
   NotFound,
+  Logout,
+  ChangePassword,
+  SendLink
 } from '../pageListAsync';
 
 class Auth extends React.Component {
@@ -16,10 +19,12 @@ class Auth extends React.Component {
       <Outer>
         <Switch>
           <Route path="/login" component={Login} />
-          <Route path="/register" component={Register} />
+          <Route path="/logout" component={Logout} />
+          <Route path="/changepassword" component={ChangePassword} />
           <Route path="/reset-password" component={ResetPassword} />
           <Route path="/maintenance" component={Maintenance} />
           <Route path="/coming-soon" component={ComingSoon} />
+          <Route path="/sendlink" component={SendLink} />
           <Route component={NotFound} />
         </Switch>
       </Outer>

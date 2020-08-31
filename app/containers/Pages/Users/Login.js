@@ -1,42 +1,36 @@
+/* eslint-disable space-before-blocks */
+/* eslint-disable no-undef */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-shadow */
+/* eslint-disable import/no-duplicates */
+/* eslint-disable react/no-unused-state */
+/* eslint-disable no-unused-vars */
 import React from 'react';
+import { fromJS, Map } from 'immutable';
+import Immutable from 'immutable';
 import { Helmet } from 'react-helmet';
 import brand from 'dan-api/dummy/brand';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { LoginForm } from 'dan-components';
-import styles from 'dan-components/Forms/user-jss';
 
+import styles from 'dan-components/Forms/user-jss';
+import LoginForm from './LoginForm';
+import fire from '../../../Firebase/firebase';
 class Login extends React.Component {
   state = {
-    valueForm: []
-  }
-
-  submitForm(values) {
-    const { valueForm } = this.state;
-    setTimeout(() => {
-      this.setState({ valueForm: values });
-      console.log(`You submitted:\n\n${valueForm}`);
-      window.location.href = '/app';
-    }, 500); // simulate server latency
+    valueForm: [],
+    email: '',
+    password: ''
   }
 
   render() {
-    const title = brand.name + ' - Login';
-    const description = brand.desc;
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <Helmet>
-          <title>{title}</title>
-          <meta name="description" content={description} />
-          <meta property="og:title" content={title} />
-          <meta property="og:description" content={description} />
-          <meta property="twitter:title" content={title} />
-          <meta property="twitter:description" content={description} />
-        </Helmet>
         <div className={classes.container}>
           <div className={classes.userFormWrap}>
-            <LoginForm onSubmit={(values) => this.submitForm(values)} />
+            <LoginForm />
           </div>
         </div>
       </div>

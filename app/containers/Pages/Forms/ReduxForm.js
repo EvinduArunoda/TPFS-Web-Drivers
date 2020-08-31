@@ -1,9 +1,10 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import brand from 'dan-api/dummy/brand';
 import { withStyles } from '@material-ui/core/styles';
 import { SourceReader, PapperBlock } from 'dan-components';
+import brand from '../../../api/dummy/brand';
 import ReduxFormDemo from './ReduxFormDemo';
+import fire from '../../../Firebase/firebase';
 
 const styles = ({
   root: {
@@ -12,15 +13,13 @@ const styles = ({
 });
 
 class ReduxForm extends React.Component {
-  state = {
-    valueForm: []
-  }
-
-  showResult(values) {
-    setTimeout(() => {
-      this.setState({ valueForm: values });
-      window.alert(`You submitted:\n\n${this.state.valueForm}`); // eslint-disable-line
-    }, 500); // simulate server latency
+// check the user logged in or not
+  componentDidMount() {
+    fire.auth().onAuthStateChanged(authUser => {
+      if (!authUser) {
+        window.location.href = '/login';
+      }
+    });
   }
 
   render() {
@@ -37,9 +36,9 @@ class ReduxForm extends React.Component {
           <meta property="twitter:title" content={title} />
           <meta property="twitter:description" content={description} />
         </Helmet>
-        <PapperBlock title="Redux Form" icon="ios-list-box-outline" desc="This is a simple demonstration of how to connect all the standard material-ui form elements to redux-form.">
+        <PapperBlock title="Complaint" icon="ios-list-box-outline" desc="">
           <div>
-            <ReduxFormDemo onSubmit={(values) => this.showResult(values)} />
+            <ReduxFormDemo />
             <SourceReader componentName={docSrc + 'ReduxFormDemo.js'} />
           </div>
         </PapperBlock>
